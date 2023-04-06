@@ -106,7 +106,14 @@ public class VIForegroundServiceModule extends ReactContextBaseJavaModule {
         Intent intent = new Intent(getReactApplicationContext(), VIForegroundService.class);
         intent.setAction(Constants.ACTION_FOREGROUND_SERVICE_START);
         intent.putExtra(NOTIFICATION_CONFIG, Arguments.toBundle(notificationConfig));
-        ComponentName componentName = getReactApplicationContext().startService(intent);
+        ReactApplicationContext context = getReactApplicationContext();
+        ComponentName componentName;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            componentName = context.startForegroundService ( intent );
+        } else {
+            componentName = context.startService ( intent );
+        }
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(FOREGROUND_SERVICE_BUTTON_PRESSED);
